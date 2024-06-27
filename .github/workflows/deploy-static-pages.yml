@@ -43,16 +43,20 @@ jobs:
       - name: Get changed files
         id: changed-files
         run: |
-          echo "files=$(git diff --name-only -- HEAD^ HEAD | grep '\.png$')" >>$GITHUB_OUTPUT
+          git fetch origin main
+          changed_files=$(git diff --name-only -- HEAD^ HEAD | grep '\.png$')
+          echo "files=$changed_files" >> $GITHUB_ENV
+          
       - name: Call Cloudflare Purge Cache API
-        if: steps.changed-files.outputs.files != ''
+        if: env.files != ''
         env:
           CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          files: ${{ env.files }}
         run: |
           changed_files=$(echo ${{ steps.changed-files.outputs.files }} | tr '\n' ' ')
           files_list=""
-          for file in $changed_files; do
+          for file in $files; do
             directory=$(dirname $file)
             file_name=$(basename $file)
             files_list+="\"https://assets.smartdefi.com/${directory}/${file_name}\","
