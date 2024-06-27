@@ -50,7 +50,11 @@ jobs:
         id: changed-files
         run: |
           git fetch origin main
-          changed_files=$(git diff --name-only -- HEAD^ HEAD | grep '\.png$')
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            changed_files=$(git diff --name-only HEAD^ HEAD | grep '\.png$')
+          else
+            changed_files=""
+          fi
           echo "files=$changed_files" >> $GITHUB_ENV
           
       - name: Call Cloudflare Purge Cache API
