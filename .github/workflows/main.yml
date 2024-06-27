@@ -1,21 +1,24 @@
-name: Copy To Branches
-on:
-  workflow_dispatch:
-jobs:
-  copy-to-branches:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+  name: Copy files to another repository
+  on:
+    push:
+      branches-ignore:
+        - main
 
-      - name: Get current branch name
-        id: vars
-        run: echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
-      
-      - name: Copy To Branches Action
-        uses: planetoftheweb/copy-to-branches@v1.2
-        env:
-          key: ${{ steps.vars.outputs.branch_name }}
-          files: ${{ steps.vars.outputs.branch_name }}
-          branches: main/${{ steps.vars.outputs.branch_name }}
+  jobs:
+      deploy:
+        runs-on: ubuntu-latest
+    
+        steps:
+        - name: Copy files
+          uses: lubu12/copy-files-to-repository@v1
+          env:
+            API_TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
+            BRANCH_NAME: ${{ GITHUB_REF#refs/heads/ }}
+            REPO: ${{ github.repository }}
+          with:
+            source-files: '/'
+            destination-username: 'workflow actions'
+            destination-repository: $REPO
+            destination-branch: main
+            destination-directory: $BRANCH_NAME
+            commit-email: 'workflow@github.com'
