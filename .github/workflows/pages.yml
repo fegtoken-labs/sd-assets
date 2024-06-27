@@ -24,6 +24,9 @@ jobs:
       id: vars
       run: echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
 
+    - name: Debug branch name
+      run: echo "Branch name is ${{ steps.vars.outputs.branch_name }}"
+
     - name: Deploy to GitHub Pages
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -39,15 +42,20 @@ jobs:
           git reset --hard
         fi
 
-        # Create a directory for the current branch if it doesn't exist
-        mkdir -p $BRANCH_NAME
+            # Create a directory for the current branch if it doesn't exist
+        if [ -z "$BRANCH_NAME" ]; then
+          echo "Branch name is empty"
+          exit 1
+        fi
+
+        mkdir -p "$BRANCH_NAME"
 
         # Use rsync to copy only new or updated files to the target directory
-        rsync -av --progress --exclude '.git' --exclude '$BRANCH_NAME' --exclude '.github' . $BRANCH_NAME/
+        rsync -av --progress --exclude '.git' --exclude "$BRANCH_NAME" --exclude '.github/workflows' . "$BRANCH_NAME/"
 
         # Add and commit the changes
-        git add $BRANCH_NAME/
+        git add "$BRANCH_NAME/"
         git commit -m "Deploy $BRANCH_NAME branch" || echo "No changes to commit"
 
-        # Push the changes to the main branch
+        # Push the changes to the gh-pages branch
         git push --force --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" main
