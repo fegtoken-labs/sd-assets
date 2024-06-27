@@ -21,8 +21,8 @@
             BRANCH_NAME: ${{ github.ref }}
           with:
             source-files: /
-            destination-username: "workflow-actions"
+            destination-username: "fegtoken-labs"
             destination-repository: ${{ github.repository }}
             destination-branch: main
-            destination-directory: "$BRANCH_NAME"
+            destination-directory: "$BRANCH_NAME/"
             commit-email: "workflow@github.com"
