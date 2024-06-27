@@ -2,11 +2,17 @@
 name: Deploy static content to Pages
 
 on:
+  push:
+    branches: 
+      - main
+      
   workflow_run:
     workflows: ["Sync Branches to Main"]
     types:
       - completed
 
+  workflow_dispatch:
+      
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
