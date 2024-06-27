@@ -1,0 +1,42 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - bsc
+      - eth
+      - base
+      - tbsc
+      - tbase
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Deploy bsc
+      if: github.ref == 'refs/heads/bsc'
+      run: |
+        git config --global user.email "fegfilip@gmail.com"
+        git config --global user.name "FEGfilip"
+        git checkout -b gh-pages
+        mkdir -p bsc
+        mv * bsc/
+        git add bsc/
+        git commit -m "Deploy branch bsc"
+        git push --force --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/SD-assets.git" gh-pages
+
+    - name: Deploy eth
+      if: github.ref == 'refs/heads/eth'
+      run: |
+        git config --global user.email "fegfilip@gmail.com"
+        git config --global user.name "FEGfilip"
+        git checkout -b gh-pages
+        mkdir -p eth
+        mv * eth/
+        git add eth/
+        git commit -m "Deploy branch eth"
+        git push --force --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/SD-assets.git" gh-pages
