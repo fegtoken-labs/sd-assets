@@ -18,7 +18,7 @@
           with:
             source-files: '/'
             destination-username: 'workflow actions'
-            destination-repository: $REPO
-            destination-branch: main
-            destination-directory: $BRANCH_NAME
+            destination-repository: '$REPO'
+            destination-branch: 'main'
+            destination-directory: '$BRANCH_NAME'
             commit-email: 'workflow@github.com'
