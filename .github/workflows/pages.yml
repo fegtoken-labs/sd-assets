@@ -27,7 +27,7 @@ jobs:
     - name: Deploy to GitHub Pages
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH_NAME: ${{ steps.vars.outputs.branch }}
+        BRANCH_NAME: ${{ steps.vars.outputs.branch_name }}
       run: |
         git fetch origin main
 
