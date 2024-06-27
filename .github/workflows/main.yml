@@ -1,29 +1,46 @@
-  name: Copy files to another repository
-  on:
-    push:
-      branches-ignore:
+name: Sync Branches to Main
+
+on:
+  push:
+    branches:
+      - '**' # This triggers the workflow on any branch
+    branches-ignore:
         - main
 
-  jobs:
-      deploy:
-        runs-on: ubuntu-latest
-    
-        steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
-          with:
-            fetch-depth: 0
+jobs:
+  sync:
+    runs-on: ubuntu-latest
 
-        - name: Copy files
-          uses: lubu12/copy-files-to-repository@v1
-          env:
-            API_TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
-            BRANCH_NAME: ${{ github.ref }}
-          with:
-            source-files: '.'
-            destination-username: "fegtoken-labs"
-            destination-repository: "SD-assets"
-            destination-branch: main
-            destination-directory: "${{ github.ref }}/"
-            commit-email: "fegfilip@gmail.com"
-            commit-username: "FEGfilip"
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v3
+
+      - name: Get current branch name
+        id: vars
+        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "fegfilip@gmail.com"
+          git config --global user.name "FEGfilip"
+
+      - name: Fetch main branch
+        run: git fetch origin main
+
+      - name: Checkout main branch
+        run: git checkout main
+
+      - name: Create a directory for the current branch
+        run: mkdir -p ./${{ env.branch }}
+
+      - name: Copy differences from current branch to main
+        run: |
+          git diff --name-only ${{ env.branch }} main | xargs -I {} cp --parents {} ./${{ env.branch }}/
+
+      - name: Commit changes
+        run: |
+          git add ./${{ env.branch }}
+          git commit -m "Sync changes from ${{ env.branch }} to main" || echo "No changes to commit"
+
+      - name: Push changes
+        run: git push origin main
