@@ -33,7 +33,10 @@ jobs:
 
       - name: Copy differences from current branch to main
         run: |
-          git diff --name-only ${{ env.branch }} main | xargs -I {} cp --parents {} ./${{ env.branch }}/
+          git checkout ${{ env.branch }}
+          rsync -av --exclude='.git' --exclude='.github/' . ../${{ env.branch }}
+          git checkout main
+          rsync -av --exclude='.git' --exclude='.github' ../${{ env.branch }}/* ./${{ env.branch }}
 
       - name: Commit changes
         run: |
