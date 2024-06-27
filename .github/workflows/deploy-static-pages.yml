@@ -45,10 +45,7 @@ jobs:
       - name: Get changed files
         id: changed-files
         run: |
-          git fetch origin main
-          git diff --name-only origin/main^ origin/main | grep '\.png$' | tr '\n' ' ' > changed_files.txt
-          echo "files=$(cat changed_files.txt)" >>$GITHUB_OUTPUT
-          
+          echo "files=$(git diff --name-only HEAD^ -- HEAD | grep '\.png$')" >>$GITHUB_OUTPUT
       - name: Call Cloudflare Purge Cache API
         if: steps.changed-files.outputs.files != ''
         env:
