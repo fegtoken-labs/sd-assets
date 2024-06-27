@@ -13,7 +13,7 @@
           uses: lubu12/copy-files-to-repository@v1
           env:
             API_TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
-            BRANCH_NAME: ${{ GITHUB_REF#refs/heads/ }}
+            BRANCH_NAME: ${{ github.ref }}
             REPO: ${{ github.repository }}
           with:
             source-files: '/'
