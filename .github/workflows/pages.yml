@@ -29,7 +29,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BRANCH_NAME: ${{ steps.vars.outputs.branch }}
       run: |
-        # Fetch the main branch
         git fetch origin main
 
         # Check out the main branch or create it if it doesn't exist
@@ -37,13 +36,14 @@ jobs:
           git checkout main
         else
           git checkout --orphan main
+          git reset --hard
         fi
 
         # Create a directory for the current branch if it doesn't exist
         mkdir -p $BRANCH_NAME
 
         # Use rsync to copy only new or updated files to the target directory
-        rsync -av --progress --exclude '.git' . $BRANCH_NAME/
+        rsync -av --progress --exclude '.git' --exclude '$BRANCH_NAME' --exclude '.github' . $BRANCH_NAME/
 
         # Add and commit the changes
         git add $BRANCH_NAME/
