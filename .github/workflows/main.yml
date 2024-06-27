@@ -16,9 +16,9 @@
             BRANCH_NAME: ${{ github.ref }}
             REPO: ${{ github.repository }}
           with:
-            source-files: '/'
-            destination-username: 'workflow actions'
-            destination-repository: '$REPO'
-            destination-branch: 'main'
-            destination-directory: '$BRANCH_NAME'
+            source-files: /
+            destination-username: "workflow-actions"
+            destination-repository: "$REPO"
+            destination-branch: main
+            destination-directory: "$BRANCH_NAME"
             commit-email: 'workflow@github.com'
