@@ -20,7 +20,7 @@
             API_TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
             BRANCH_NAME: ${{ github.ref }}
           with:
-            source-files: /
+            source-files: '.'
             destination-username: "fegtoken-labs"
             destination-repository: "SD-assets"
             destination-branch: main
