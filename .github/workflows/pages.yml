@@ -44,9 +44,9 @@ jobs:
       run: |
         git config --global user.email "fegfilip@gmail.com"
         git config --global user.name "FEGfilip"
-        git checkout -b gh-pages
-        mkdir -p tbsc
-        mv * tbsc/
+        git fetch origin gh-pages
+        git checkout gh-pages || git checkout --orphan gh-pages
+        rsync -av --progress . tbsc --exclude .git --exclude tbsc
         git add tbsc/
-        git commit -m "Deploy branch tbsc"
+        git commit -m "Deploy branch tbsc" || echo "No changes to commit"
         git push --force --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/SD-assets.git" gh-pages
