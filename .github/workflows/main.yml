@@ -2,8 +2,6 @@ name: Sync Branches to Main
 
 on:
   push:
-    branches:
-      - '**' # This triggers the workflow on any branch
     branches-ignore:
         - main
 
