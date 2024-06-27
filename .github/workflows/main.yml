@@ -22,7 +22,7 @@
           with:
             source-files: /
             destination-username: "fegtoken-labs"
-            destination-repository: ${{ github.repository }}
+            destination-repository: "SD-assets"
             destination-branch: main
             destination-directory: "$BRANCH_NAME/"
             commit-email: "workflow@github.com"
