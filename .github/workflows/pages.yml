@@ -31,7 +31,7 @@ jobs:
         mkdir -p $BRANCH_NAME
         
         # Use rsync to copy the content to the target directory
-        rsync -av --progress . $BRANCH_NAME --exclude .git --exclude $BRANCH_NAME
+        rsync --progress . $BRANCH_NAME --exclude .git --exclude $BRANCH_NAME
         
         # Add and commit the changes
         git add $BRANCH_NAME/
