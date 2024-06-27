@@ -40,7 +40,7 @@ jobs:
 
       - name: Commit changes
         run: |
-          git add ./${{ env.branch }}
+          git add .
           git commit -m "Sync changes from ${{ env.branch }} to main" || echo "No changes to commit"
 
       - name: Push changes
