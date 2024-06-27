@@ -48,17 +48,17 @@ jobs:
 
       - name: Get changed files
         id: changed-files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: space-delimited
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Printing
         run: |
-          git fetch origin main
-          if git rev-parse HEAD^ >/dev/null 2>&1; then
-            changed_files=$(git diff --name-only HEAD^ HEAD | grep '\.png$')
-          else
-            changed_files=""
-          fi
-          echo "files=$changed_files" >> $GITHUB_ENV
+          echo "${{ steps.changed-files.outputs.added_modified }}"
           
       - name: Call Cloudflare Purge Cache API
-        if: env.files != ''
+        if: steps.changed-files.outputs.added_modified != ''
         env:
           CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
