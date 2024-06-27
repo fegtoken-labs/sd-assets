@@ -22,7 +22,7 @@ jobs:
 
     - name: Get current branch name
       id: vars
-      run: echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})"
+      run: echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
 
     - name: Deploy to GitHub Pages
       env:
