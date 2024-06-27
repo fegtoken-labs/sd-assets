@@ -3,39 +3,51 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches-ignore:
-      - gh-pages
+      - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Ensure the full history is fetched so we can create a new branch if needed
+
+    - name: Set up Git
+      run: |
+        git config --global user.email "fegfilip@gmail.com"
+        git config --global user.name "FEGfilip"
+
+    - name: Get current branch name
+      id: vars
+      run: echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})"
 
     - name: Deploy to GitHub Pages
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH_NAME: ${{ steps.vars.outputs.branch }}
       run: |
-        BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})
-        
-        # Configure git
-        git config --global user.email "fegfilip@gmail.com"
-        git config --global user.name "FEGfilip"
-        
-        # Fetch and checkout the gh-pages branch or create it if it doesn't exist
-        git fetch origin gh-pages
-        git checkout gh-pages || git checkout --orphan gh-pages
-        
-        # Create the target directory for the current branch
+        # Fetch the main branch
+        git fetch origin main
+
+        # Check out the main branch or create it if it doesn't exist
+        if git rev-parse --verify origin/main; then
+          git checkout main
+        else
+          git checkout --orphan main
+        fi
+
+        # Create a directory for the current branch if it doesn't exist
         mkdir -p $BRANCH_NAME
-        
-        # Use rsync to copy the content to the target directory
-        rsync --progress . $BRANCH_NAME --exclude .git --exclude $BRANCH_NAME
-        
+
+        # Use rsync to copy only new or updated files to the target directory
+        rsync -av --progress --exclude '.git' . $BRANCH_NAME/
+
         # Add and commit the changes
         git add $BRANCH_NAME/
-        git commit -m "Deploy $BRANCH_NAME" || echo "No changes to commit"
-        
-        # Push the changes to the gh-pages branch
-        git push --force --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" gh-pages
+        git commit -m "Deploy $BRANCH_NAME branch" || echo "No changes to commit"
+
+        # Push the changes to the main branch
+        git push --force --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" main
