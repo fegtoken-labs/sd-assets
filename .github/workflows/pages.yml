@@ -39,7 +39,7 @@ jobs:
         git commit -m "Deploy branch eth"
         git push --force --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/SD-assets.git" gh-pages
 
-    - name: Deploy bsc
+    - name: Deploy tbsc
       if: github.ref == 'refs/heads/tbsc'
       run: |
         git config --global user.email "fegfilip@gmail.com"
