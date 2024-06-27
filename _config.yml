@@ -1,0 +1,4 @@
+incremental: true
+ignore_theme_config: true
+exclude: ['./init']
+sass: false
