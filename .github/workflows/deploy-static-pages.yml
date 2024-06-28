@@ -73,7 +73,7 @@ jobs:
               directory=$(dirname $file)
               file_name=$(basename $file)
               files_list+="\"https://assets.smartdefi.com/${directory}/${file_name}\","
-            di
+            fi
           done
           files_list="[${files_list%,}]"
           echo "Purging cache for files: $files_list"
