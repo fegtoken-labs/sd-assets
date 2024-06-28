@@ -61,13 +61,13 @@ jobs:
           done
 
       - name: Call Cloudflare Purge Cache API
-        if: env.changed_files != ''
+        if: ${changed_files} != ''
         env:
           CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          files: ${{ env.changed_files }}
+          files: ${{ changed_files }}
         run: |
-          changed_files=$(echo ${{ env.changed_files }} | tr '\n' ' ')
+          changed_files=$(echo ${{ files }} | tr '\n' ' ')
           files_list=""
           for file in $files; do
             directory=$(dirname $file)
