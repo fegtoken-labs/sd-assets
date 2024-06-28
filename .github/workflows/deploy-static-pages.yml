@@ -48,21 +48,20 @@ jobs:
 
       - name: Get changed files
         id: changed-files
-        uses: jitterbit/get-changed-files@v1
+        uses: lots0logs/gh-action-get-changed-files@2.2.2
         with:
-          format: space-delimited
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Printing
         run: |
-          echo "${{ steps.changed-files.outputs.added_modified }}"
+          echo "${{ steps.changed-files.outputs.all }}"
           
       - name: Call Cloudflare Purge Cache API
-        if: steps.changed-files.outputs.added_modified != ''
+        if: steps.changed-files.outputs.all != ''
         env:
           CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          files: ${{ env.files }}
+          files: ${{ steps.changed-files.outputs.all }}
         run: |
           changed_files=$(echo ${{ steps.changed-files.outputs.files }} | tr '\n' ' ')
           files_list=""
