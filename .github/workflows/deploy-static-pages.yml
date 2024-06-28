@@ -48,22 +48,26 @@ jobs:
 
       - name: Get changed files
         id: changed-files
-        uses: lots0logs/gh-action-get-changed-files@2.2.2
+        uses: tj-actions/changed-files@v44
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          since_last_remote_commit: true 
 
-      - name: Printing
+      - name: List all changed files
+        env:
+          changed_files: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
-          echo "${{ steps.changed-files.outputs.all }}"
-          
+          for file in ${changed_files}; do
+            echo "$file was changed"
+          done
+
       - name: Call Cloudflare Purge Cache API
-        if: steps.changed-files.outputs.all != ''
+        if: env.changed_files != ''
         env:
           CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          files: ${{ steps.changed-files.outputs.all }}
+          files: ${{ env.changed_files }}
         run: |
-          changed_files=$(echo ${{ steps.changed-files.outputs.files }} | tr '\n' ' ')
+          changed_files=$(echo ${{ env.changed_files }} | tr '\n' ' ')
           files_list=""
           for file in $files; do
             directory=$(dirname $file)
