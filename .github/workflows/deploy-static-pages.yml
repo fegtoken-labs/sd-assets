@@ -61,15 +61,14 @@ jobs:
           done
 
       - name: Call Cloudflare Purge Cache API
-        if: env.changed_files != ''
+        if: ${{ env.changed_files }} != ''
         env:
           CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          files: ${{ env.changed_files }}
         run: |
-          changed_files=$(echo ${files} | tr '\n' ' ')
+          changed_files=$(echo ${{ env.changed_files }} | tr '\n' ' ')
           files_list=""
-          for file in ${files}; do
+          for file in ${{ env.changed_files }}; do
             directory=$(dirname $file)
             file_name=$(basename $file)
             files_list+="\"https://assets.smartdefi.com/${directory}/${file_name}\","
