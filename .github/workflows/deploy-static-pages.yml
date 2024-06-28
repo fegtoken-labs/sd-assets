@@ -69,9 +69,11 @@ jobs:
           changed_files=$(echo ${{ steps.changed-files.outputs.all_changed_files }} | tr '\n' ' ')
           files_list=""
           for file in $changed_files; do
-            directory=$(dirname $file)
-            file_name=$(basename $file)
-            files_list+="\"https://assets.smartdefi.com/${directory}/${file_name}\","
+            if [[ $file == *.png ]]; then
+              directory=$(dirname $file)
+              file_name=$(basename $file)
+              files_list+="\"https://assets.smartdefi.com/${directory}/${file_name}\","
+            di
           done
           files_list="[${files_list%,}]"
           echo "Purging cache for files: $files_list"
