@@ -68,7 +68,7 @@ jobs:
         run: |
           changed_files=$(echo ${{ env.changed_files }} | tr '\n' ' ')
           files_list=""
-          for file in ${{ env.changed_files }}; do
+          for file in $changed_files; do
             directory=$(dirname $file)
             file_name=$(basename $file)
             files_list+="\"https://assets.smartdefi.com/${directory}/${file_name}\","
